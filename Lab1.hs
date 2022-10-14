@@ -1,6 +1,6 @@
 --{-# LANGUAGE FlexibleContexts #-}
 import Data.Char(isUpper, isLower)
---import Data.List (permutations)
+import Data.List (permutations)
 --import Data.ByteString (copy)
 --import Data.ByteString (count, length)
 
@@ -50,7 +50,7 @@ deleteUppercaseWords = unwords . filter (not . any isUpper) . words  --[if c `el
 --Найти частичную сумму первых n членов ряда: ∑1/n^2.
 --Функция должна принимать в качестве параметра количество слагаемых и возвращать сумму.
 --Функция должна быть реализована с использованием функций zip, map или zipWith без явного использования рекурсии.
-partialSum :: (Num c, Enum a) => (a -> c) -> a -> a -> c
+partialSum :: (Num c) => (Int -> c) -> Int -> Int -> c
 partialSum f s n = sum . map f $[s..n]
 
 --5
@@ -64,7 +64,7 @@ dropEveryNElement n s = foldl (flip (:)) (dropEveryNElement n (drop n s)) (rever
 --Дан список из целых чисел, нужно выделить из него все неубывающие подпоследовательности максимальной длины.
 --Функция должна принимать в качестве параметра список и возвращать список списков.
 --Например, для списка [1,2,3,2,1,4,2,3,4] результат должен быть [[1,2,3],[2,3,4]] (порядок важен).
-findBiggestNondecreasingSubsequences s = helper (findAllSubsequences (<=) s) [] 0
+findBiggestNondecreasingSubsequences s = reverse . helper (findAllSubsequences (<=) s) [] $0
     where
         helper [] [] _ = []
         helper [] bs _ = bs
@@ -72,6 +72,12 @@ findBiggestNondecreasingSubsequences s = helper (findAllSubsequences (<=) s) [] 
             | length x > l = helper s [x] (length x)
             | length x == l = helper s (x:bs) l
             | otherwise = helper s bs l
+
+findBiggestNondecreasingSubsequences' s = reverse . helper $(findAllSubsequences (<=) s )
+    where
+        helper :: [a] -> [[a]]
+        helper xs = filter (\x -> length x == maximum xs) xs
+
 
 findFirstSubsequence f s = helper f s []
     where
@@ -150,6 +156,6 @@ permutations' xs0        =  xs0 : perms xs0 []
 --perms'' :: [a] -> [[a]]
 --perms'' = foldr (\ x -> concatMap (rotations'' . (x :))) [[]]
 
-permutations :: [a] -> [[a]]
-permutations = foldr (\ x -> concatMap (rotations . (x :))) [[]]
+permutations''''' :: [a] -> [[a]]
+permutations''''' = foldr (\ x -> concatMap (rotations . (x :))) [[]]
     where rotations xs = take (length xs) (iterate (\(y:ys) -> ys ++ [y]) xs)
