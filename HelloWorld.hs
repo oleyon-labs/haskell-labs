@@ -58,7 +58,3 @@ translate'' val
 
 conditionalFunc bool val1 val2 = if bool then val1 else val2
 
-solveQuadraticEquation a b c =
-    if a == 0
-        then - c / b
-        else 2
