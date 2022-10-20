@@ -98,6 +98,6 @@ rotations :: Int -> [a] -> [[a]]
 rotations len xs = take len (iterate (\(y:ys) -> ys ++ [y]) xs)
 
 perms :: [a] -> [[a]]
-perms []        = [[]]
+perms [] = [[]]
 perms l@(x:xs) = concatMap (rotations len.(x:)) (perms xs)
     where len = length l
