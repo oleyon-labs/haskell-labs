@@ -15,3 +15,13 @@ list' = zip l1 l2
         l2 = map (^2) l1
 
 funSum n = sum . map snd . take n $ list'
+
+
+
+findFirstSubsequence f s = helper f s []
+    where
+        helper f [] [] = []
+        helper f (x:s) [] = reverse . helper f s $[x]
+        helper f s sub
+            | null s = sub
+            | otherwise = if f (head sub) (head s) then helper f (tail s) (head s : sub) else sub

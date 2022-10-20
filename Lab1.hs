@@ -53,6 +53,9 @@ deleteUppercaseWords = unwords . filter (not . any isUpper) . words  --[if c `el
 partialSum :: (Num c) => (Int -> c) -> Int -> Int -> c
 partialSum f s n = sum . map f $[s..n]
 
+partialSum' :: (Num c, Enum c) => (c -> c) -> Int -> c
+partialSum' f n = sum . map f $take n [1..]
+
 --5
 --Удалить из списка каждый третий элемент.
 --Функция должна принимать в качестве параметра список и возвращать список.
@@ -64,29 +67,12 @@ dropEveryNElement n s = foldl (flip (:)) (dropEveryNElement n (drop n s)) (rever
 --Дан список из целых чисел, нужно выделить из него все неубывающие подпоследовательности максимальной длины.
 --Функция должна принимать в качестве параметра список и возвращать список списков.
 --Например, для списка [1,2,3,2,1,4,2,3,4] результат должен быть [[1,2,3],[2,3,4]] (порядок важен).
-findBiggestNondecreasingSubsequences s = reverse . helper (findAllSubsequences (<=) s) [] $0
+findBiggestNondecreasingSubsequences s = helper (findAllSubsequences (<=) s )
     where
-        helper [] [] _ = []
-        helper [] bs _ = bs
-        helper (x:s) bs l
-            | length x > l = helper s [x] (length x)
-            | length x == l = helper s (x:bs) l
-            | otherwise = helper s bs l
+        helper xs = filter (\x -> length x == maxSubSequence) xs
+            where maxSubSequence = maximum . map length $xs
 
-findBiggestNondecreasingSubsequences' s = reverse . helper $(findAllSubsequences (<=) s )
-    where
-        helper :: [a] -> [[a]]
-        helper xs = filter (\x -> length x == maximum xs) xs
-
-
-findFirstSubsequence f s = helper f s []
-    where
-        helper f [] [] = []
-        helper f (x:s) [] = reverse . helper f s $[x]
-        helper f s sub
-            | null s = sub
-            | otherwise = if f (head sub) (head s) then helper f (tail s) (head s : sub) else sub
-
+findAllSubsequences :: (a -> a -> Bool) -> [a] -> [[a]]
 findAllSubsequences f s = helper f s [] []
     where
         helper f [] [] [] = []
@@ -98,64 +84,20 @@ findAllSubsequences f s = helper f s [] []
 --Дан список из уникальных элементов, нужно найти все перестановки заданного списка.
 --Функция должна принимать в качестве параметра список и возвращать список списков.
 --Например, для списка [1,2,3] результат должен быть [[1,2,3],[1,3,2],[[2,1,3],[2,3,1], [[3,2,1],[3,1,2]] (порядок не важен).
---permutations [] = []
---permutations s = helper s (length s - 1) [] []
---    where
-        --helper [] _ pn ps = pn:ps
-        --helper s 0 pn ps = ps
-        --helper s c pn ps = helper (drop (c - 1) s ++ take (c - 2) s) (c - 1)  (s !! max 0 (c-2) : pn) ps
-        --helper s c pn ps 
-        --    | null s = pn:ps
-        --    | c < 0 = ps
-        --    | otherwise = helper (take (c + 1) s ++ drop c s) (c - 1)  (s !! c : pn) ps
---        helper s c pn
---            | null s = pn:ps
---            | c < 0 = 1
---            | otherwise = helper (take c s ++ drop (c + 1) s) (length s - 1)  (s !! c : pn) ps
+rotations' :: [a] -> [[a]]
+rotations' xs = take (length xs) (iterate (\(y:ys) -> ys ++ [y]) xs)
 
+perms' :: [a] -> [[a]]
+perms' = foldr (\ x -> concatMap (rotations' . (x :))) [[]]
 
-permutations'q s = helper s []
-    where
-        helper [] _ = [[]]
-        helper [x] ps = map (x:) (helper ps [])
-        helper (x : s) ps = helper [x] (s ++ ps) ++ helper s (x : ps)
-
---permq = permutations
-
-permutations'''' :: [a] -> [[a]]
-permutations'''' xs = doPerm xs []
-  where
-    doPerm [] _ = [[]]
-    doPerm [y] ys = map (y:) (doPerm ys [])
-    doPerm (y : ys) zs = doPerm [y] (ys ++ zs) ++ doPerm ys (y : zs)
-
-permutations'            :: [a] -> [[a]]
-permutations' xs0        =  xs0 : perms xs0 []
-  where
-    perms []     _  = []
-    perms (t:ts) is = foldr interleave (perms ts (t:is)) (permutations' is)
-      where interleave    xs     r = let (_,zs) = interleave' id xs r in zs
-            interleave' _ []     r = (ts, r)
-            interleave' f (y:ys) r = let (us,zs) = interleave' (f . (y:)) ys r
-                                     in  (y:us, f (t:y:us) : zs)
-
-
-
-
-
---rotations'' :: [a] -> [[a]]
---rotations'' xs = take (length xs) (iterate (\(y:ys) -> ys ++ [y]) xs)
-
---perms'' :: [a] -> [[a]]
---perms'' []     = [[]]
---perms'' (x:xs) = concatMap (rotations''.(x:)) (perms'' xs)
-
---rotations'' :: [a] -> [[a]]
---rotations'' xs = take (length xs) (iterate (\(y:ys) -> ys ++ [y]) xs)
-
---perms'' :: [a] -> [[a]]
---perms'' = foldr (\ x -> concatMap (rotations'' . (x :))) [[]]
-
-permutations''''' :: [a] -> [[a]]
-permutations''''' = foldr (\ x -> concatMap (rotations . (x :))) [[]]
+perms'' :: [a] -> [[a]]
+perms'' = foldr (\ x -> concatMap (rotations . (x :))) [[]]
     where rotations xs = take (length xs) (iterate (\(y:ys) -> ys ++ [y]) xs)
+
+rotations :: Int -> [a] -> [[a]]
+rotations len xs = take len (iterate (\(y:ys) -> ys ++ [y]) xs)
+
+perms :: [a] -> [[a]]
+perms []        = [[]]
+perms l@(x:xs) = concatMap (rotations len.(x:)) (perms xs)
+    where len = length l
