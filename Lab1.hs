@@ -1,8 +1,4 @@
---{-# LANGUAGE FlexibleContexts #-}
 import Data.Char(isUpper, isLower)
-import Data.List (permutations)
---import Data.ByteString (copy)
---import Data.ByteString (count, length)
 
 --1
 --Функция должна находить все вещественные решения уравнения 2го порядка,
@@ -31,10 +27,6 @@ sum'n'count n = helper (abs n) 0 0
             | n == 0 = (s, c)
             | otherwise = helper (div n 10) (s + mod n 10) (c + 1)
 
---sum'n'count' :: a -> [a]
---sum'n'count' 0 = (0, 1)
---sum'n'count' n = takeWhile (\(x,y) -> x > 0 || y > 0) . iterate (\(x,y) -> x `divMod` 10) $ (n, 0)
-
 --3
 --Реализовать функцию, которая из заданной строки удаляет все слова,
 --которые содержат хотя бы одну заглавную букву.
@@ -50,11 +42,12 @@ deleteUppercaseWords = unwords . filter (not . any isUpper) . words  --[if c `el
 --Найти частичную сумму первых n членов ряда: ∑1/n^2.
 --Функция должна принимать в качестве параметра количество слагаемых и возвращать сумму.
 --Функция должна быть реализована с использованием функций zip, map или zipWith без явного использования рекурсии.
-partialSum :: (Num c) => (Int -> c) -> Int -> Int -> c
-partialSum f s n = sum . map f $[s..n]
 
-partialSum' :: (Num c, Enum c) => (c -> c) -> Int -> c
-partialSum' f n = sum . map f $take n [1..]
+partialSum :: (Num c, Enum c) => (c -> c) -> Int -> c
+partialSum f n = sum . map f $take n [1..]
+
+f :: Fractional a => a -> a
+f x = 1 / x ^ 2 --функция для задания
 
 --5
 --Удалить из списка каждый третий элемент.
@@ -67,6 +60,7 @@ dropEveryNElement n s = foldl (flip (:)) (dropEveryNElement n (drop n s)) (rever
 --Дан список из целых чисел, нужно выделить из него все неубывающие подпоследовательности максимальной длины.
 --Функция должна принимать в качестве параметра список и возвращать список списков.
 --Например, для списка [1,2,3,2,1,4,2,3,4] результат должен быть [[1,2,3],[2,3,4]] (порядок важен).
+findBiggestNondecreasingSubsequences :: Ord a => [a] -> [[a]]
 findBiggestNondecreasingSubsequences s = helper (findAllSubsequences (<=) s )
     where
         helper xs = filter (\x -> length x == maxSubSequence) xs
@@ -84,20 +78,11 @@ findAllSubsequences f s = helper f s [] []
 --Дан список из уникальных элементов, нужно найти все перестановки заданного списка.
 --Функция должна принимать в качестве параметра список и возвращать список списков.
 --Например, для списка [1,2,3] результат должен быть [[1,2,3],[1,3,2],[[2,1,3],[2,3,1], [[3,2,1],[3,1,2]] (порядок не важен).
-rotations' :: [a] -> [[a]]
-rotations' xs = take (length xs) (iterate (\(y:ys) -> ys ++ [y]) xs)
-
-perms' :: [a] -> [[a]]
-perms' = foldr (\ x -> concatMap (rotations' . (x :))) [[]]
-
-perms'' :: [a] -> [[a]]
-perms'' = foldr (\ x -> concatMap (rotations . (x :))) [[]]
-    where rotations xs = take (length xs) (iterate (\(y:ys) -> ys ++ [y]) xs)
 
 rotations :: Int -> [a] -> [[a]]
 rotations len xs = take len (iterate (\(y:ys) -> ys ++ [y]) xs)
 
-perms :: [a] -> [[a]]
-perms [] = [[]]
-perms l@(x:xs) = concatMap (rotations len.(x:)) (perms xs)
+permutations' :: [a] -> [[a]]
+permutations' [] = [[]]
+permutations' l@(x:xs) = concatMap (rotations len.(x:)) (permutations' xs)
     where len = length l

@@ -46,6 +46,12 @@ integralCalc f a b n = h * ((f a + f b) / 2 + sum)
             | otherwise = helper (x + h) (acc + f x)
 --integralCalc (\ x -> 3 * x ^ 2) 0 3 100
 
+integralCalc' f a b n = h * ((f a + f b) / 2 + res a (n - 1) 0) --лучше работает
+    where
+        h = (b - a) / n
+        res _ 0 sum = sum
+        res a n sum = res (a + h) (n - 1) (f a + sum)
+
 fib n = helper 1 1 n
     where
         helper n1 n2 n
@@ -140,7 +146,7 @@ reverse' (x:xs) = reverse' xs ++ [x]
 
 elem' :: (Eq a) => a -> [a] -> Bool
 elem' el [] = False
-elem' el (x:xs) 
+elem' el (x:xs)
     | el == x = True
     | otherwise = elem' el xs
 
