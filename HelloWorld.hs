@@ -2,6 +2,7 @@ import Language.Haskell.TH (valD)
 --main = putStrLn "hello world"
 --func1 a b = a + b
 --func2 a b = if a > b then a else b
+discount :: (Ord a, Fractional a) => a -> a -> a -> a
 discount price minPrice disc =
     if price < minPrice
         then price
