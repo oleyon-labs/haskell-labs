@@ -1,6 +1,6 @@
-{-# LANGUAGE MultiParamTypeClasses #-}
+--{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
-import Distribution.Simple.Setup (InstallFlags(installCabalFilePath))
+--import Distribution.Simple.Setup (InstallFlags(installCabalFilePath))
 --1. Придумать свой класс типов, который содержит как минимум две
 --функции, одна из которых выражается через другие. Написать реализацию
 --этого класса типов для любых двух типов данных, типы данных выбирать
@@ -15,7 +15,7 @@ class Sortable a where
     construct :: [Int] -> a
 
     sort :: a -> a
-    sort xs = construct (qsort (deconstruct xs))
+    sort xs = construct . qsort . deconstruct $xs
         where
             qsort :: Ord b => [b] -> [b]
             qsort [] = []
@@ -46,7 +46,7 @@ instance Sortable [Int] where
 --tree1) (toList tree2).
 
 data BinaryTree a = Empty | Node a (BinaryTree a) (BinaryTree a)
-    deriving(Show)
+    deriving(Show, Eq)
 
 
 toList :: BinaryTree a -> [a]
@@ -74,6 +74,22 @@ height tree = helper tree 0
 --mappend (toList . toBinaryTree $[1..10]) (toList . toBinaryTree  $[11..20])
 --toList (mappend (toBinaryTree [1..10]) (toBinaryTree [11..20]))
 
+tree1 = toBinaryTree [1,46,3,7]
+tree2 = toBinaryTree [6,4,2,1]
+tree3 = toBinaryTree [85,7,4,2,8,3,2]
+
+trees = [tree1, tree2, tree3]
+
+lists = map toList [tree1, tree2, tree3]
+resultTree = mconcat trees
+resultArray = mconcat lists
+
+abob = resultArray == toList resultTree
+
+
+abab = mappend (toList . toBinaryTree $[1..10]) (toList . toBinaryTree  $[11..20]) == toList (mappend (toBinaryTree [1..10]) (toBinaryTree [11..20]))
+
+
 instance Semigroup (BinaryTree a) where
     (<>) a b = toBinaryTree . mappend (toList a) $ toList b
 
@@ -95,19 +111,19 @@ instance Monoid (BinaryTree a) where
 
 
 
-removeSpaces str = words [c | c <- str, c != ' ']
+--removeSpaces str = words [c | c <- str, c != ' ']
 
 
 
-getTokens str = formTokens str "" []
-    where
-        formTokens "" tokens = tokens
-        formTokens str tokens = formTokens (drop n str) token tokens
+--getTokens str = formTokens str "" []
+--    where
+--        formTokens "" tokens = tokens
+--        formTokens str tokens = formTokens (drop n str) token tokens
 
 
 
-getNextToken (c : str)
-    | isDigit c = getNumber str
+--getNextToken (c : str)
+--    | isDigit c = getNumber str
 -- = if (isDigit c) then getNumber str [c] else if (isLetter c) then getFunction str [c] else if (elem c "()+-/*^") then
 
 
