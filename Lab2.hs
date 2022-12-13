@@ -86,9 +86,17 @@ resultArray = mconcat lists
 
 abob = resultArray == toList resultTree
 
+lists1 = map toList trees1
+trees1 = [tree1, tree11, tree3]
+
+resultArray1 = mconcat trees1
+resultTree1 = mconcat lists1
+
+tree11 = Node 1 Empty (Node 2 Empty (Node 3 Empty Empty))
+
 
 abab = mappend (toList . toBinaryTree $[1..10]) (toList . toBinaryTree  $[11..20]) == toList (mappend (toBinaryTree [1..10]) (toBinaryTree [11..20]))
-
+--abab1 = mappend (toList . toBinaryTree $[1..10]) (toList . toBinaryTree  $[11..20]) == toList (mappend (toBinaryTree [1..10]) (toBinaryTree [11..20]))
 
 instance Semigroup (BinaryTree a) where
     (<>) a b = toBinaryTree . mappend (toList a) $ toList b
