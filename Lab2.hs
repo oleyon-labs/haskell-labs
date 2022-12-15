@@ -90,9 +90,17 @@ resultArray = mconcat lists
 
 abob = resultArray == toList resultTree
 
+lists1 = map toList trees1
+trees1 = [tree1, tree11, tree3]
+
+resultArray1 = mconcat trees1
+resultTree1 = mconcat lists1
+
+tree11 = Node 1 Empty (Node 2 Empty (Node 3 Empty Empty))
+
 
 abab = mappend (toList . toBinaryTree $[1..10]) (toList . toBinaryTree  $[11..20]) == toList (mappend (toBinaryTree [1..10]) (toBinaryTree [11..20]))
-
+--abab1 = mappend (toList . toBinaryTree $[1..10]) (toList . toBinaryTree  $[11..20]) == toList (mappend (toBinaryTree [1..10]) (toBinaryTree [11..20]))
 
 instance Semigroup (BinaryTree a) where
     (<>) a b = toBinaryTree . mappend (toList a) $ toList b
@@ -113,7 +121,9 @@ instance Monoid (BinaryTree a) where
 --инфиксной формы в постфиксную форму.
 --3.3.Вычисление результата.
 
+data Token = Number Double | LBracket | RBracket | Operation Oper | Function String Double
 
+data Oper = Plus | Minus | Mult | Div | Pow
 
 --removeSpaces str = words [c | c <- str, c != ' ']
 
@@ -128,21 +138,8 @@ instance Monoid (BinaryTree a) where
 
 --getNextToken (c : str)
 --    | isDigit c = getNumber str
--- = if (isDigit c) then getNumber str [c] else if (isLetter c) then getFunction str [c] else if (elem c "()+-/*^") then
+--    |  = if (isDigit c) then getNumber str [c] else if (isLetter c) then getFunction str [c] else if (elem c "()+-/*^") then
 
 
 --deleteUppercaseWords = unwords . filter (not . any isUpper) . words  --[if c `elem` ",.?!:;" then ' ' else c | c <- str]
 
-
-data Token a = TNumber a | TPlus | TMinus | TMult | TDiv | TOBracket | TCBracket | TFunction a | TError
-
-
---getTokens str = helper str []
---    where
---        helper str tokens = getToken 
-
---getToken str@(c : xs)
---    | isNumber c = takeWhile (\x -> isNumber x || x == '.') str
---    | otherwise = TError
-
---test str = read str :: Float
