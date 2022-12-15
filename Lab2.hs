@@ -117,7 +117,9 @@ instance Monoid (BinaryTree a) where
 --инфиксной формы в постфиксную форму.
 --3.3.Вычисление результата.
 
+data Token = Number Double | LBracket | RBracket | Operation Oper | Function String Double
 
+data Oper = Plus | Minus | Mult | Div | Pow
 
 --removeSpaces str = words [c | c <- str, c != ' ']
 
@@ -132,7 +134,8 @@ instance Monoid (BinaryTree a) where
 
 --getNextToken (c : str)
 --    | isDigit c = getNumber str
--- = if (isDigit c) then getNumber str [c] else if (isLetter c) then getFunction str [c] else if (elem c "()+-/*^") then
+--    |  = if (isDigit c) then getNumber str [c] else if (isLetter c) then getFunction str [c] else if (elem c "()+-/*^") then
 
 
 --deleteUppercaseWords = unwords . filter (not . any isUpper) . words  --[if c `elem` ",.?!:;" then ' ' else c | c <- str]
+
