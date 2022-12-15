@@ -1,5 +1,9 @@
 --{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
+--{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleInstances #-}
+import Distribution.Simple.Utils (xargs, cabalVersion)
+import Data.Char (isNumber)
 --import Distribution.Simple.Setup (InstallFlags(installCabalFilePath))
 --1. Придумать свой класс типов, который содержит как минимум две
 --функции, одна из которых выражается через другие. Написать реализацию
@@ -128,3 +132,17 @@ instance Monoid (BinaryTree a) where
 
 
 --deleteUppercaseWords = unwords . filter (not . any isUpper) . words  --[if c `elem` ",.?!:;" then ' ' else c | c <- str]
+
+
+data Token a = TNumber a | TPlus | TMinus | TMult | TDiv | TOBracket | TCBracket | TFunction a | TError
+
+
+--getTokens str = helper str []
+--    where
+--        helper str tokens = getToken 
+
+--getToken str@(c : xs)
+--    | isNumber c = takeWhile (\x -> isNumber x || x == '.') str
+--    | otherwise = TError
+
+--test str = read str :: Float
