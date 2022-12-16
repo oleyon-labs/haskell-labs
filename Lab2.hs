@@ -3,7 +3,7 @@
 --{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
 import Distribution.Simple.Utils (xargs, cabalVersion)
-import Data.Char (isNumber)
+import Data.Char (isNumber, isDigit, isLetter)
 --import Distribution.Simple.Setup (InstallFlags(installCabalFilePath))
 --1. Придумать свой класс типов, который содержит как минимум две
 --функции, одна из которых выражается через другие. Написать реализацию
@@ -121,11 +121,19 @@ instance Monoid (BinaryTree a) where
 --инфиксной формы в постфиксную форму.
 --3.3.Вычисление результата.
 
-data Token = Number Double | LBracket | RBracket | Operation Oper | Function String Double
+data Token = Number Double | LBracket | RBracket | Operation Oper | Function String | ErrToken
+    deriving(Show)
 
 data Oper = Plus | Minus | Mult | Div | Pow
+    deriving(Show)
 
---removeSpaces str = words [c | c <- str, c != ' ']
+data Tree a = Node a Tree Tree | Empty
+    deriving(Show)
+
+
+
+
+removeSpaces str = [c | c <- str, c `notElem` "\n \r\t"]
 
 
 
@@ -143,3 +151,42 @@ data Oper = Plus | Minus | Mult | Div | Pow
 
 --deleteUppercaseWords = unwords . filter (not . any isUpper) . words  --[if c `elem` ",.?!:;" then ' ' else c | c <- str]
 
+
+
+getTokens [] = []
+getTokens xs = helper (removeSpaces xs)
+    where
+        helper str = fst token : getTokens (drop (snd token) str)
+            where token = getToken str
+
+getToken [] = (ErrToken, 0)
+getToken str@(c : xs)
+    | c == '+' = (Operation Plus, 1)
+    | c == '-' = (Operation Minus, 1)
+    | c == '*' = (Operation Mult, 1)
+    | c == '/' = (Operation Div, 1)
+    | c == '^' = (Operation Pow, 1)
+    | c == '(' = (LBracket, 1)
+    | c == ')' = (RBracket, 1)
+    | isDigit c = getNumber str
+    | isLetter c = getFunction str
+    | otherwise = (ErrToken, 0)
+
+getNumber [] = (ErrToken, 0)
+getNumber str = (Number (read helper :: Double), length helper)
+    where
+        helper = if (str !! length firstPart) == '.' then wholeNumber else firstPart
+            where
+                firstPart = takeWhile isDigit str
+                secondPart = takeWhile isDigit $ drop (length firstPart + 1) str
+                wholeNumber = firstPart ++ ('.' : secondPart)
+
+getFunction [] = (ErrToken, 0)
+getFunction str = (Function funName, length funName)
+    where funName = takeWhile (\x -> isLetter x || isDigit x) str
+
+
+
+--getOperationTree tokens 
+
+-- "sin(34) + cos (12 +   32.123)/2^(3)"
