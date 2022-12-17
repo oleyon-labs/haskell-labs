@@ -127,8 +127,8 @@ data Token = Number Double | LBracket | RBracket | Operation Oper | Function Str
 data Oper = Plus | Minus | Mult | Div | Pow
     deriving(Show)
 
-data Tree a = Node a Tree Tree | Empty
-    deriving(Show)
+--data Tree a = Node a Tree Tree | Empty
+--    deriving(Show)
 
 
 
@@ -183,10 +183,16 @@ getNumber str = (Number (read helper :: Double), length helper)
 
 getFunction [] = (ErrToken, 0)
 getFunction str = (Function funName, length funName)
-    where funName = takeWhile (\x -> isLetter x || isDigit x) str
+    where 
+        funName = takeWhile (\x -> isLetter x || isDigit x) str
+        funVal "sin" = sin
+        funVal "cos" = cos
+        funVal "tan" = tan
+        funVal "atan" = atan
+        --funVal _ = ErrToken ""
 
-
+--priority 
 
 --getOperationTree tokens 
 
--- "sin(34) + cos (12 +   32.123)/2^(3)"
+-- "sin(34) + cos (12 +   32.123)/2^(3)"Calc
