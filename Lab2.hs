@@ -127,8 +127,8 @@ data Token = Number Double | LBracket | RBracket | Operation Oper | Function Str
 data Oper = Plus | Minus | Mult | Div | Pow
     deriving(Show)
 
-data Tree a = Node a Tree Tree | Empty
-    deriving(Show)
+--data Tree a = Node a Tree Tree | Empty
+--    deriving(Show)
 
 
 
